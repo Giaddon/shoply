@@ -1,0 +1,16 @@
+This is an exercise to practice React, Redux, and the React Router! 
+We’ll be building an e-commerce site where users can browser your 
+inventory and add items to their shopping cart.
+
+Part One: Displaying the Products
+
+Page w/ all products, each product has add/remove from cart buttons.
+
+Components:
+<App >
+  <ProductList > ?
+    <Product >
+
+Store
+  all products
+  cart
