@@ -1,0 +1,13 @@
+.CartData {
+  width: 100%;
+  color: #fff;
+  background-color: skyblue;
+  height: 60px;
+  padding: 10px 0 0 30px;
+  font-size: 15px;
+}
+
+.CartData p, h5 {
+  margin: 0;
+  padding: 0;
+}

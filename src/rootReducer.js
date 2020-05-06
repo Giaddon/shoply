@@ -3,35 +3,45 @@ import { ADD, REMOVE } from "./actionTypes";
 
 const INITIAL_STATE = {
   inventory: inventory.products,
-  cart: [],
+  cart: {},
+  totalCost: 0.00,
+  totalQuantity: 0,
 }
 
-// ask if we want unique action types for each case rather than doing the logic here 
-//(do the logic in the action creator)
-
+/** Reducer to manage redux store.
+ */
 function rootReducer(state=INITIAL_STATE, action) {
+  
   switch (action.type) {
-    case ADD:
-      let addProduct = state.cart.find(p => p.id === action.payload.id)
-      if (addProduct) {
-        const adjustedProduct = {...addProduct, quantity: addProduct.quantity + 1};
-        let newCart = state.cart.filter(p => p.id !== action.payload.id)
-        return {...state, cart: [...newCart, adjustedProduct]};
-      } else {
-        let newCart = [...state.cart, {...action.payload, quantity: 1}]
-        return {...state, cart: newCart };
-      }
+    case ADD: {
+      // Use product ID to lookup price.
+      const price = state.inventory[action.id].price;
+      const newCart = {...state.cart};
+      newCart[action.id] = (newCart[action.id] || 0 ) + 1;
+      return {...state, 
+              cart: newCart, 
+              totalQuantity: state.totalQuantity + 1, 
+              totalCost: Number((state.totalCost + price).toFixed(2))};
+    }
 
-    case REMOVE:
-      let removeProduct = state.cart.find(p => p.id === action.payload.id)
-      if (removeProduct.quantity > 1) {
-        const adjustedProduct = {...removeProduct, quantity: removeProduct.quantity - 1};
-        let newCart = state.cart.filter(p => p.id !== action.payload.id)
-        return [...newCart, adjustedProduct];
+    case REMOVE: {
+      const price = state.inventory[action.id]["price"];
+      const newCart = {...state.cart};
+      if (!newCart[action.id]) return state;
+      if (newCart[action.id] === 1) {
+        delete newCart[action.id];
+        return {...state, 
+                cart: newCart, 
+                totalQuantity: state.totalQuantity - 1, 
+                totalCost: Number((state.totalCost - price).toFixed(2))};
       } else {
-        return state.cart.filter(p => p.id !== action.payload.id);
-      }
-
+        newCart[action.id] = newCart[action.id] - 1;
+        return {...state, 
+                cart: newCart, 
+                totalQuantity: state.totalQuantity - 1, 
+                totalCost: Number((state.totalCost - price).toFixed(2))};
+      }  
+    }
     default:
       return state;
   }
